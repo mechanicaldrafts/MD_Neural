@@ -1212,6 +1212,19 @@ Keep it professional, specific, and actionable. Format clearly with section head
         setTimeout(() => location.reload(), 2000);
       }, 1000);
     }
+
+    // ── EXPOSE FUNCTIONS GLOBALLY (for onclick handlers) ─────────────────────
+    window.switchTab     = switchTab;
+    window.handleAuth    = handleAuth;
+    window.signOut       = signOut;
+    window.newBrief      = newBrief;
+    window.generateBrief = generateBrief;
+    window.runProTool    = runProTool;
+    window.copyBrief     = copyBrief;
+    window.downloadPDF   = downloadPDF;
+    window.downloadWord  = downloadWord;
+    window.shareBrief    = shareBrief;
+    window.handleUpgrade = handleUpgrade;
   </script>
 </body>
 </html>
