@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MD Neural — Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-50: #f9f9f9;
+      --gray-100: #f0f0f0;
+      --gray-200: #e0e0e0;
+      --gray-400: #a0a0a0;
+      --gray-600: #606060;
+      --gray-800: #1a1a1a;
+      --gray-900: #111111;
+      --border: rgba(255,255,255,0.08);
+      --radius: 999px;
+      --radius-card: 14px;
+      --sidebar: 280px;
+      --proxy: 'https://md-neural-proxy.onrender.com';
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* ── AUTH OVERLAY ── */
+    #auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 400px;
+      padding: 48px 40px;
+      background: var(--gray-900);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      margin: 20px;
+    }
+
+    .auth-logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .auth-logo span { color: var(--gray-600); }
+
+    .auth-box p {
+      font-size: 14px;
+      color: var(--gray-400);
+      margin-bottom: 32px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 8px;
+      border-radius: var(--radius);
+      border: none;
+      background: transparent;
+      color: var(--gray-400);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .auth-tab.active {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .auth-field {
+      margin-bottom: 14px;
+    }
+
+    .auth-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-400);
+      margin-bottom: 6px;
+    }
+
+    .auth-field input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--white);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .auth-field input:focus { border-color: rgba(255,255,255,0.3); }
+
+    .btn-auth {
+      width: 100%;
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius);
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-auth:hover { opacity: 0.88; }
+
+    .auth-error {
+      font-size: 13px;
+      color: #f87171;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      width: var(--sidebar);
+      min-width: var(--sidebar);
+      height: 100vh;
+      background: var(--gray-900);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .sidebar-logo span { color: var(--gray-600); }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: var(--gray-400);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+    }
+
+    .user-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: var(--radius);
+    }
+
+    .badge-pro-tag { background: var(--white); color: var(--black); }
+    .badge-free-tag { background: rgba(255,255,255,0.08); color: var(--gray-400); }
+
+    .sidebar-new-btn {
+      margin: 16px;
+      background: rgba(255,255,255,0.06);
+      color: var(--white);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      width: calc(100% - 32px);
+      transition: background 0.2s;
+      text-align: center;
+    }
+
+    .sidebar-new-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      padding: 0 16px 8px;
+    }
+
+    .sidebar-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    .sidebar-history::-webkit-scrollbar { width: 4px; }
+    .sidebar-history::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-history::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    .history-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      margin: 2px 8px;
+      transition: background 0.15s;
+    }
+
+    .history-item:hover { background: rgba(255,255,255,0.06); }
+
+    .history-item.active { background: rgba(255,255,255,0.08); }
+
+    .history-name {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-date {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-top: 2px;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-sidebar-footer {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray-400);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, color 0.2s;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+
+    .btn-sidebar-footer:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+
+    /* ── MAIN ── */
+    #main {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #main::-webkit-scrollbar { width: 6px; }
+    #main::-webkit-scrollbar-track { background: transparent; }
+    #main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+    /* ── INPUT PANEL ── */
+    #input-panel {
+      padding: 48px 48px 0;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .panel-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 6px;
+    }
+
+    .panel-sub {
+      font-size: 14px;
+      color: var(--gray-400);
+      margin-bottom: 32px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+
+    .form-field.full { grid-column: 1 / -1; }
+
+    .form-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-400);
+      letter-spacing: 0.3px;
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      background: var(--gray-900);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--white);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus { border-color: rgba(255,255,255,0.3); }
+
+    .form-field select option { background: var(--gray-800); }
+
+    .btn-generate {
+      width: 100%;
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius);
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-generate:hover { opacity: 0.88; }
+    .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── OUTPUT PANEL ── */
+    #output-panel {
+      padding: 32px 48px 48px;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      display: none;
+    }
+
+    /* ── BRIEF OUTPUT ── */
+    .brief-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brief-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+
+    .brief-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray-400);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-action:hover { background: rgba(255,255,255,0.06); color: var(--white); border-color: rgba(255,255,255,0.2); }
+
+    .brief-content {
+      background: var(--gray-900);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 32px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--gray-200);
+      white-space: pre-wrap;
+      margin-bottom: 32px;
+    }
+
+    /* ── PRO TOOLS GRID ── */
+    .pro-tools-section { margin-top: 8px; }
+
+    .pro-tools-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 14px;
+    }
+
+    .pro-tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .pro-tool-btn {
+      background: var(--gray-900);
+      border: none;
+      padding: 20px 18px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      text-align: left;
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    .pro-tool-btn:hover { background: #1e1e1e; }
+    .pro-tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pro-tool-btn:disabled:hover { background: var(--gray-900); }
+
+    .pro-tool-icon { font-size: 20px; display: block; margin-bottom: 8px; }
+
+    .pro-tool-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .pro-tool-desc {
+      font-size: 11px;
+      color: var(--gray-600);
+      display: block;
+      line-height: 1.4;
+    }
+
+    .pro-tool-lock {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    /* ── TOOL RESULT ── */
+    .tool-result {
+      background: var(--gray-900);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 28px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .tool-result-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tool-result-content {
+      font-size: 13px;
+      color: var(--gray-200);
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    /* ── UPGRADE BANNER ── */
+    .upgrade-banner {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-card);
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .upgrade-banner p {
+      font-size: 14px;
+      color: var(--gray-400);
+    }
+
+    .upgrade-banner strong { color: var(--white); }
+
+    .btn-upgrade {
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .btn-upgrade:hover { opacity: 0.88; }
+
+    /* ── LOADING ── */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-bar {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--white), transparent);
+      background-size: 200% 100%;
+      animation: loading 1.4s ease infinite;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--white);
+      color: var(--black);
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #input-panel, #output-panel { padding: 24px 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .pro-tools-grid { grid-template-columns: 1fr 1fr; }
+      .brief-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AUTH OVERLAY -->
+  <div id="auth-overlay">
+    <div class="auth-box">
+      <div class="auth-logo">MD<span>Neural</span></div>
+      <p>Sign in to start generating product briefs.</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('signin')">Sign in</button>
+        <button class="auth-tab" onclick="switchTab('signup')">Sign up</button>
+      </div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="auth-email" placeholder="you@example.com" />
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="auth-password" placeholder="••••••••" />
+      </div>
+      <button class="btn-auth" id="auth-btn" onclick="handleAuth()">Sign in</button>
+      <p class="auth-error" id="auth-error"></p>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">MD<span>Neural</span></div>
+      <div class="sidebar-user">
+        <span class="user-email" id="user-email-display">—</span>
+        <span class="user-badge" id="user-badge">Free</span>
+      </div>
+    </div>
+    <button class="sidebar-new-btn" onclick="newBrief()">+ New Brief</button>
+    <p class="sidebar-section-label">Recent Briefs</p>
+    <div class="sidebar-history" id="history-list"></div>
+    <div class="sidebar-footer">
+      <a href="index.html" class="btn-sidebar-footer">← Home</a>
+      <button class="btn-sidebar-footer" onclick="signOut()">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- INPUT PANEL -->
+    <div id="input-panel">
+      <h1 class="panel-title">Generate a brief</h1>
+      <p class="panel-sub">Fill in your product details and let AI do the rest.</p>
+
+      <div class="form-grid">
+        <div class="form-field full">
+          <label>PRODUCT NAME</label>
+          <input type="text" id="product-name" placeholder="e.g. Smart Water Bottle" />
+        </div>
+        <div class="form-field full">
+          <label>PRODUCT DESCRIPTION</label>
+          <textarea id="product-desc" rows="3" placeholder="Describe what your product does, who it's for, and what makes it unique..."></textarea>
+        </div>
+        <div class="form-field">
+          <label>INDUSTRY</label>
+          <select id="industry">
+            <option value="">Select industry</option>
+            <option>Consumer Electronics</option>
+            <option>Medical Devices</option>
+            <option>Industrial Equipment</option>
+            <option>Consumer Products</option>
+            <option>Automotive</option>
+            <option>Aerospace</option>
+            <option>Food & Beverage</option>
+            <option>Sporting Goods</option>
+            <option>Furniture & Home</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>DEVELOPMENT STAGE</label>
+          <select id="stage">
+            <option value="">Select stage</option>
+            <option>Concept / Idea</option>
+            <option>Prototype</option>
+            <option>Pre-production</option>
+            <option>Ready to manufacture</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>BUDGET (USD)</label>
+          <select id="budget">
+            <option value="">Select budget</option>
+            <option>Under $5,000</option>
+            <option>$5,000 – $20,000</option>
+            <option>$20,000 – $100,000</option>
+            <option>$100,000+</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>TARGET MARKET</label>
+          <input type="text" id="target-market" placeholder="e.g. UAE consumers, B2B" />
+        </div>
+      </div>
+
+      <button class="btn-generate" id="generate-btn" onclick="generateBrief()">
+        Generate Design Brief
+      </button>
+    </div>
+
+    <!-- OUTPUT PANEL -->
+    <div id="output-panel">
+      <div id="loading-bar" class="loading-bar" style="display:none;"></div>
+
+      <div class="brief-header">
+        <h2 class="brief-title" id="brief-title">Design Brief</h2>
+        <div class="brief-actions">
+          <button class="btn-action" onclick="copyBrief()">📋 Copy</button>
+          <button class="btn-action" onclick="downloadPDF()">⬇ PDF</button>
+          <button class="btn-action" onclick="downloadWord()">📄 Word</button>
+          <button class="btn-action" onclick="shareBrief()">🔗 Share</button>
+        </div>
+      </div>
+
+      <div class="brief-content" id="brief-content"></div>
+
+      <!-- PRO TOOLS -->
+      <div class="pro-tools-section" id="pro-tools-section">
+        <p class="pro-tools-label">Pro AI Tools</p>
+        <div class="pro-tools-grid">
+          <button class="pro-tool-btn" onclick="runProTool('bom')" id="tool-bom">
+            <span class="pro-tool-icon">🔩</span>
+            <span class="pro-tool-name">Bill of Materials</span>
+            <span class="pro-tool-desc">Parts list with costs & suppliers</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('dfm')" id="tool-dfm">
+            <span class="pro-tool-icon">🏭</span>
+            <span class="pro-tool-name">DFM Analysis</span>
+            <span class="pro-tool-desc">Manufacturing issues by severity</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('cad')" id="tool-cad">
+            <span class="pro-tool-icon">📐</span>
+            <span class="pro-tool-name">CAD Spec Sheet</span>
+            <span class="pro-tool-desc">Tolerances, grades, finish</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('competitor')" id="tool-competitor">
+            <span class="pro-tool-icon">🔍</span>
+            <span class="pro-tool-name">Competitor Analysis</span>
+            <span class="pro-tool-desc">Market gaps & opportunities</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('cost')" id="tool-cost">
+            <span class="pro-tool-icon">💰</span>
+            <span class="pro-tool-name">Cost Estimator</span>
+            <span class="pro-tool-desc">Full cost breakdown by phase</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('material')" id="tool-material">
+            <span class="pro-tool-icon">🧪</span>
+            <span class="pro-tool-name">Material Selector</span>
+            <span class="pro-tool-desc">Top 3 materials with pros/cons</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('supplier')" id="tool-supplier">
+            <span class="pro-tool-icon">🌏</span>
+            <span class="pro-tool-name">Supplier Finder</span>
+            <span class="pro-tool-desc">UAE & China suppliers</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('patent')" id="tool-patent">
+            <span class="pro-tool-icon">⚖️</span>
+            <span class="pro-tool-name">Patent Check</span>
+            <span class="pro-tool-desc">Risk level & differentiation</span>
+          </button>
+          <button class="pro-tool-btn" onclick="runProTool('packaging')" id="tool-packaging">
+            <span class="pro-tool-icon">📦</span>
+            <span class="pro-tool-name">Packaging Brief</span>
+            <span class="pro-tool-desc">Primary & secondary specs</span>
+          </button>
+        </div>
+
+        <!-- Upgrade banner for free users -->
+        <div class="upgrade-banner" id="upgrade-banner" style="display:none;">
+          <p><strong>Unlock all 9 Pro tools</strong> — BOM, DFM, cost estimates, supplier finder, and more.</p>
+          <button class="btn-upgrade" onclick="handleUpgrade()">Upgrade to Pro — $10/mo</button>
+        </div>
+
+        <div class="tool-result" id="tool-result">
+          <div class="tool-result-title" id="tool-result-title"></div>
+          <div class="tool-result-content" id="tool-result-content"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+  <script>
+    // ── CONFIG ──────────────────────────────────────────────────────────────────
+    const SUPABASE_URL  = 'https://riekschnhlsxrblmltfr.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpZWtzY2huaGxzeHJibG1sdGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NzE2NTAsImV4cCI6MjA5ODE0NzY1MH0.aXcsdPywCqwYw_HYLzZDAqs6QGaPSLdrE_ZLvagI5P8';
+    const PROXY_URL     = 'https://md-neural-proxy.onrender.com';
+    const PRICE_MONTHLY = 'price_1Tn22hDhCPp6Mqwf1lLYRHFp';
+    const PRICE_YEARLY  = 'price_1Tn23MDhCPp6Mqwf1km24FJf';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    // ── STATE ───────────────────────────────────────────────────────────────────
+    let currentUser   = null;
+    let currentProfile = null;
+    let currentBrief  = null;
+    let currentBriefId = null;
+    let authMode      = 'signin';
+
+    // ── AUTH ────────────────────────────────────────────────────────────────────
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        currentUser = session.user;
+        await loadProfile();
+        document.getElementById('auth-overlay').style.display = 'none';
+        document.getElementById('user-email-display').textContent = currentUser.email;
+        loadHistory();
+      } else {
+        currentUser = null;
+        currentProfile = null;
+        document.getElementById('auth-overlay').style.display = 'flex';
+      }
+    });
+
+    function switchTab(mode) {
+      authMode = mode;
+      document.querySelectorAll('.auth-tab').forEach((t, i) => {
+        t.classList.toggle('active', (mode === 'signin' && i === 0) || (mode === 'signup' && i === 1));
+      });
+      document.getElementById('auth-btn').textContent = mode === 'signin' ? 'Sign in' : 'Create account';
+      document.getElementById('auth-error').textContent = '';
+    }
+
+    async function handleAuth() {
+      const email    = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const errEl    = document.getElementById('auth-error');
+      errEl.textContent = '';
+
+      if (!email || !password) { errEl.textContent = 'Please fill in all fields.'; return; }
+
+      const btn = document.getElementById('auth-btn');
+      btn.textContent = 'Please wait...';
+      btn.disabled = true;
+
+      let result;
+      if (authMode === 'signin') {
+        result = await supabase.auth.signInWithPassword({ email, password });
+      } else {
+        result = await supabase.auth.signUp({ email, password });
+        if (!result.error) {
+          // Create profile on signup
+          await supabase.from('profiles').insert({ id: result.data.user.id, email, is_pro: false, brief_count: 0 });
+        }
+      }
+
+      btn.disabled = false;
+      btn.textContent = authMode === 'signin' ? 'Sign in' : 'Create account';
+
+      if (result.error) {
+        errEl.textContent = result.error.message;
+      } else if (authMode === 'signup') {
+        errEl.style.color = '#4ade80';
+        errEl.textContent = 'Account created! Check your email to confirm.';
+      }
+    }
+
+    async function signOut() {
+      await supabase.auth.signOut();
+    }
+
+    // ── PROFILE ─────────────────────────────────────────────────────────────────
+    async function loadProfile() {
+      const { data } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+      currentProfile = data;
+
+      const badge = document.getElementById('user-badge');
+      if (data?.is_pro) {
+        badge.textContent = 'Pro';
+        badge.className = 'user-badge badge-pro-tag';
+      } else {
+        badge.textContent = 'Free';
+        badge.className = 'user-badge badge-free-tag';
+      }
+
+      updateProToolState();
+    }
+
+    function updateProToolState() {
+      const isPro = currentProfile?.is_pro;
+      document.querySelectorAll('.pro-tool-btn').forEach(btn => {
+        btn.disabled = !isPro;
+        const lock = btn.querySelector('.pro-tool-lock');
+        if (!isPro && !lock) {
+          const l = document.createElement('span');
+          l.className = 'pro-tool-lock';
+          l.textContent = '🔒';
+          btn.appendChild(l);
+        }
+        if (isPro && lock) lock.remove();
+      });
+      document.getElementById('upgrade-banner').style.display = isPro ? 'none' : 'flex';
+    }
+
+    // ── HISTORY ─────────────────────────────────────────────────────────────────
+    async function loadHistory() {
+      const { data } = await supabase
+        .from('briefs')
+        .select('id, product_name, created_at')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false })
+        .limit(30);
+
+      const list = document.getElementById('history-list');
+      list.innerHTML = '';
+
+      if (!data?.length) {
+        list.innerHTML = '<p style="font-size:12px;color:var(--gray-600);padding:8px 16px;">No briefs yet.</p>';
+        return;
+      }
+
+      data.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'history-item';
+        el.dataset.id = item.id;
+        el.innerHTML = `
+          <div class="history-name">${item.product_name}</div>
+          <div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>
+        `;
+        el.onclick = () => loadBriefFromHistory(item.id);
+        list.appendChild(el);
+      });
+    }
+
+    async function loadBriefFromHistory(id) {
+      const { data } = await supabase.from('briefs').select('*').eq('id', id).single();
+      if (!data) return;
+
+      currentBriefId = id;
+      currentBrief   = data.brief_data;
+
+      document.getElementById('product-name').value  = data.product_name || '';
+      document.getElementById('product-desc').value  = data.input_data?.description || '';
+      document.getElementById('industry').value      = data.input_data?.industry || '';
+      document.getElementById('stage').value         = data.input_data?.stage || '';
+      document.getElementById('budget').value        = data.input_data?.budget || '';
+      document.getElementById('target-market').value = data.input_data?.targetMarket || '';
+
+      showOutput(data.product_name, typeof data.brief_data === 'string' ? data.brief_data : JSON.stringify(data.brief_data, null, 2));
+
+      document.querySelectorAll('.history-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+      });
+
+      document.getElementById('tool-result').style.display = 'none';
+    }
+
+    function newBrief() {
+      document.getElementById('output-panel').style.display = 'none';
+      document.getElementById('input-panel').style.display = 'block';
+      document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+      currentBrief = null;
+      currentBriefId = null;
+      document.getElementById('tool-result').style.display = 'none';
+    }
+
+    // ── GENERATE ─────────────────────────────────────────────────────────────────
+    async function generateBrief() {
+      if (!currentUser) return;
+
+      const name   = document.getElementById('product-name').value.trim();
+      const desc   = document.getElementById('product-desc').value.trim();
+      const ind    = document.getElementById('industry').value;
+      const stage  = document.getElementById('stage').value;
+      const budget = document.getElementById('budget').value;
+      const market = document.getElementById('target-market').value.trim();
+
+      if (!name || !desc) { showToast('Please enter a product name and description.'); return; }
+
+      // Check brief limit for free users
+      if (!currentProfile?.is_pro && (currentProfile?.brief_count || 0) >= 1) {
+        showToast('Free limit reached. Upgrade to Pro for unlimited briefs.');
+        return;
+      }
+
+      const btn = document.getElementById('generate-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Generating...';
+
+      const prompt = `You are a senior product design engineer. Generate a comprehensive product design brief for the following product.
+
+Product Name: ${name}
+Description: ${desc}
+Industry: ${ind || 'Not specified'}
+Development Stage: ${stage || 'Not specified'}
+Budget: ${budget || 'Not specified'}
+Target Market: ${market || 'Not specified'}
+
+Write a detailed, professional design brief covering:
+1. Executive Summary
+2. Product Overview & Objectives
+3. Target User & Market
+4. Key Features & Requirements
+5. Technical Specifications
+6. Design Constraints
+7. Success Metrics
+
+Keep it professional, specific, and actionable. Format clearly with section headers.`;
+
+      try {
+        const res  = await fetch(`${PROXY_URL}/api/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, max_tokens: 2000 })
+        });
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        const briefText = data.result;
+        currentBrief = briefText;
+
+        // Save to Supabase
+        const shareId = crypto.randomUUID().slice(0, 8);
+        const inputData = { description: desc, industry: ind, stage, budget, targetMarket: market };
+
+        if (currentBriefId) {
+          await supabase.from('briefs').update({ brief_data: briefText, input_data: inputData }).eq('id', currentBriefId);
+        } else {
+          const { data: saved } = await supabase.from('briefs').insert({
+            user_id: currentUser.id,
+            product_name: name,
+            brief_data: briefText,
+            input_data: inputData,
+            share_id: shareId,
+            is_public: false
+          }).select().single();
+          if (saved) currentBriefId = saved.id;
+        }
+
+        // Increment brief count for free users
+        if (!currentProfile?.is_pro) {
+          await supabase.from('profiles').update({ brief_count: (currentProfile?.brief_count || 0) + 1 }).eq('id', currentUser.id);
+        }
+
+        showOutput(name, briefText);
+        loadHistory();
+
+      } catch (err) {
+        showToast('Generation failed. Please try again.');
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Generate Design Brief';
+      }
+    }
+
+    function showOutput(name, text) {
+      document.getElementById('input-panel').style.display = 'none';
+      document.getElementById('output-panel').style.display = 'block';
+      document.getElementById('brief-title').textContent = name;
+      document.getElementById('brief-content').textContent = text;
+      document.getElementById('pro-tools-section').style.display = 'block';
+      updateProToolState();
+    }
+
+    // ── PRO TOOLS ───────────────────────────────────────────────────────────────
+    const proToolConfig = {
+      bom:        { icon: '🔩', name: 'Bill of Materials', prompt: (n, b) => `Generate a detailed Bill of Materials (BOM) for: ${n}\n\nProduct Brief:\n${b}\n\nList all components with: Part name, quantity, estimated unit cost (USD), recommended supplier, lead time. Format as a clear table. Be specific and realistic.` },
+      dfm:        { icon: '🏭', name: 'DFM Analysis', prompt: (n, b) => `Perform a Design for Manufacturing (DFM) analysis for: ${n}\n\nProduct Brief:\n${b}\n\nIdentify manufacturing issues categorized as HIGH/MEDIUM/LOW severity. For each issue provide: severity, description, and recommended fix. Be specific and actionable.` },
+      cad:        { icon: '📐', name: 'CAD Spec Sheet', prompt: (n, b) => `Generate a CAD Specification Sheet for: ${n}\n\nProduct Brief:\n${b}\n\nInclude: key dimensions and tolerances, material grades (with standards e.g. ASTM), surface finish requirements, GD&T notes, and manufacturing process recommendations.` },
+      competitor: { icon: '🔍', name: 'Competitor Analysis', prompt: (n, b) => `Perform a competitor analysis for: ${n}\n\nProduct Brief:\n${b}\n\nIdentify 3-5 similar products on the market. For each: product name, price range, key features, weaknesses. Then identify market gaps and opportunities for differentiation.` },
+      cost:       { icon: '💰', name: 'Cost Estimator', prompt: (n, b) => `Generate a project cost estimate for: ${n}\n\nProduct Brief:\n${b}\n\nBreak down costs by phase: Design & Engineering, Prototyping, Tooling, Manufacturing (per unit at 100/1000/10000 units), Packaging, Certification/Testing. Provide realistic USD estimates.` },
+      material:   { icon: '🧪', name: 'Material Selector', prompt: (n, b) => `Recommend the top 3 materials for: ${n}\n\nProduct Brief:\n${b}\n\nFor each material: name, key properties, pros, cons, approx cost per kg, processing methods, and suitability score (1-10). Justify each recommendation.` },
+      supplier:   { icon: '🌏', name: 'Supplier Finder', prompt: (n, b) => `Identify suppliers for: ${n}\n\nProduct Brief:\n${b}\n\nProvide: 3 UAE suppliers and 3 China suppliers (Alibaba search terms, typical MOQ, lead times). Include red flags to watch for and quality verification tips.` },
+      patent:     { icon: '⚖️', name: 'Patent Check', prompt: (n, b) => `Perform a patent risk assessment for: ${n}\n\nProduct Brief:\n${b}\n\nAssess: overall patent risk level (Low/Medium/High), 3-5 potentially similar existing patents, key differentiating features that reduce risk, and recommendations for freedom-to-operate.` },
+      packaging:  { icon: '📦', name: 'Packaging Brief', prompt: (n, b) => `Generate a packaging brief for: ${n}\n\nProduct Brief:\n${b}\n\nSpecify: primary packaging (material, dimensions, closure type), secondary packaging (retail box specs), sustainability considerations, labeling requirements, and estimated packaging cost.` }
+    };
+
+    async function runProTool(toolKey) {
+      if (!currentProfile?.is_pro) {
+        showToast('Upgrade to Pro to use this tool.');
+        return;
+      }
+      if (!currentBrief) { showToast('Generate a brief first.'); return; }
+
+      const config  = proToolConfig[toolKey];
+      const name    = document.getElementById('product-name').value.trim() || 'Product';
+      const resultEl = document.getElementById('tool-result');
+      const titleEl  = document.getElementById('tool-result-title');
+      const contentEl = document.getElementById('tool-result-content');
+
+      resultEl.style.display = 'block';
+      titleEl.innerHTML = `${config.icon} ${config.name} <span style="font-size:12px;color:var(--gray-600);font-weight:400;">generating...</span>`;
+      contentEl.textContent = '';
+
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      try {
+        const res = await fetch(`${PROXY_URL}/api/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: config.prompt(name, currentBrief), max_tokens: 2000 })
+        });
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        titleEl.innerHTML = `${config.icon} ${config.name}`;
+        contentEl.textContent = data.result;
+
+      } catch (err) {
+        titleEl.innerHTML = `${config.icon} ${config.name}`;
+        contentEl.textContent = 'Generation failed. Please try again.';
+        console.error(err);
+      }
+    }
+
+    // ── EXPORT ──────────────────────────────────────────────────────────────────
+    function copyBrief() {
+      const text = document.getElementById('brief-content').textContent;
+      navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!'));
+    }
+
+    function downloadPDF() {
+      const text  = document.getElementById('brief-content').textContent;
+      const name  = document.getElementById('brief-title').textContent;
+      const win   = window.open('', '_blank');
+      win.document.write(`
+        <html><head><title>${name}</title>
+        <style>body{font-family:Inter,sans-serif;padding:48px;max-width:800px;margin:0 auto;color:#111;line-height:1.7;}
+        h1{font-size:24px;margin-bottom:24px;}pre{white-space:pre-wrap;font-family:inherit;}</style></head>
+        <body><h1>${name} — Design Brief</h1><pre>${text}</pre></body></html>`);
+      win.document.close();
+      win.print();
+    }
+
+    function downloadWord() {
+      const text = document.getElementById('brief-content').textContent;
+      const name = document.getElementById('brief-title').textContent;
+      const blob = new Blob([`${name} — Design Brief\n\n${text}`], { type: 'application/msword' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = `${name}-brief.doc`;
+      a.click(); URL.revokeObjectURL(url);
+    }
+
+    async function shareBrief() {
+      if (!currentBriefId) { showToast('Save a brief first.'); return; }
+      await supabase.from('briefs').update({ is_public: true }).eq('id', currentBriefId);
+      const url = `${window.location.origin}/brief.html?id=${currentBriefId}`;
+      navigator.clipboard.writeText(url).then(() => showToast('Share link copied!'));
+    }
+
+    // ── UPGRADE ─────────────────────────────────────────────────────────────────
+    async function handleUpgrade(type = 'monthly') {
+      if (!currentUser) return;
+      const priceId = type === 'yearly' ? PRICE_YEARLY : PRICE_MONTHLY;
+      try {
+        const res = await fetch(`${PROXY_URL}/api/checkout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ priceId, userEmail: currentUser.email })
+        });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+      } catch (err) {
+        showToast('Checkout failed. Please try again.');
+      }
+    }
+
+    // ── TOAST ───────────────────────────────────────────────────────────────────
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── URL PARAMS ──────────────────────────────────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      setTimeout(() => {
+        showToast('🎉 Welcome to Pro! Refreshing your account...');
+        setTimeout(() => location.reload(), 2000);
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

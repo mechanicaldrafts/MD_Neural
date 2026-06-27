@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MD Neural — AI Product Design Tools</title>
+  <meta name="description" content="Describe a product idea. Get instant professional engineering documentation. Built for founders, engineers, and manufacturers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-50: #f9f9f9;
+      --gray-100: #f0f0f0;
+      --gray-200: #e0e0e0;
+      --gray-400: #a0a0a0;
+      --gray-600: #606060;
+      --gray-800: #1a1a1a;
+      --radius: 999px;
+      --radius-card: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--gray-400); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray-400);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--white);
+      color: var(--black) !important;
+      padding: 10px 22px;
+      border-radius: var(--radius);
+      font-weight: 600 !important;
+      font-size: 14px !important;
+      transition: opacity 0.2s !important;
+    }
+
+    .nav-cta:hover { opacity: 0.85; color: var(--black) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-400);
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero-badge-dot {
+      width: 6px; height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -3px;
+      max-width: 900px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gray-400);
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--gray-400);
+      max-width: 480px;
+      font-weight: 400;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.3s;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.4s;
+    }
+
+    .btn-primary {
+      background: var(--white);
+      color: var(--black);
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--gray-400);
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: border-color 0.2s, color 0.2s;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      width: 100%;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 0;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .ticker {
+      display: flex;
+      gap: 48px;
+      animation: ticker 20s linear infinite;
+      width: max-content;
+    }
+
+    .ticker-item {
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-600);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .ticker-item span { color: var(--gray-400); margin-right: 48px; }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 100px 24px; }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 17px;
+      color: var(--gray-400);
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* ── HOW IT WORKS ── */
+    .how { background: var(--black); }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+    }
+
+    .how-card {
+      background: var(--black);
+      padding: 48px 40px;
+      position: relative;
+    }
+
+    .how-number {
+      font-size: 72px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.04);
+      line-height: 1;
+      margin-bottom: 24px;
+      letter-spacing: -3px;
+    }
+
+    .how-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .how-card p {
+      font-size: 15px;
+      color: var(--gray-400);
+      line-height: 1.6;
+    }
+
+    /* ── TOOLS ── */
+    .tools { background: rgba(255,255,255,0.015); }
+
+    .tools-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 64px;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+    }
+
+    .tool-card {
+      background: var(--gray-800);
+      padding: 32px 28px;
+      transition: background 0.2s;
+    }
+
+    .tool-card:hover { background: #222; }
+
+    .tool-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .tool-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .tool-card p {
+      font-size: 13px;
+      color: var(--gray-400);
+      line-height: 1.6;
+    }
+
+    .tool-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius);
+      margin-top: 14px;
+    }
+
+    .badge-free { background: rgba(74,222,128,0.12); color: #4ade80; }
+    .badge-pro { background: rgba(255,255,255,0.08); color: var(--gray-400); }
+
+    /* ── PRICING ── */
+    .pricing { background: var(--black); }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      max-width: 800px;
+      margin: 64px auto 0;
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+    }
+
+    .price-card {
+      background: var(--gray-800);
+      padding: 48px 40px;
+      position: relative;
+    }
+
+    .price-card.featured {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .price-plan {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 24px;
+    }
+
+    .price-card.featured .price-plan { color: var(--gray-600); }
+
+    .price-amount {
+      font-size: 56px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .price-period {
+      font-size: 14px;
+      color: var(--gray-400);
+      margin-bottom: 32px;
+    }
+
+    .price-card.featured .price-period { color: var(--gray-600); }
+
+    .price-features {
+      list-style: none;
+      margin-bottom: 40px;
+    }
+
+    .price-features li {
+      font-size: 14px;
+      color: var(--gray-400);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .price-card.featured .price-features li {
+      color: var(--gray-600);
+      border-bottom-color: rgba(0,0,0,0.06);
+    }
+
+    .price-features li::before {
+      content: '✓';
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--white);
+      background: rgba(255,255,255,0.1);
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .price-card.featured .price-features li::before {
+      color: var(--white);
+      background: var(--black);
+    }
+
+    .btn-price-primary {
+      display: block;
+      text-align: center;
+      background: var(--black);
+      color: var(--white);
+      padding: 14px;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      transition: opacity 0.2s;
+    }
+
+    .btn-price-primary:hover { opacity: 0.8; }
+
+    .btn-price-secondary {
+      display: block;
+      text-align: center;
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      padding: 14px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn-price-secondary:hover { background: rgba(255,255,255,0.14); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .footer-logo span { color: var(--gray-600); }
+
+    footer p {
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+
+    footer a {
+      color: var(--gray-400);
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--white); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .how-grid, .tools-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .tools-header { flex-direction: column; align-items: flex-start; }
+      section { padding: 64px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">MD<span>Neural</span></a>
+    <ul class="nav-links">
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="tool.html">Sign in</a></li>
+      <li><a href="tool.html" class="nav-cta">Get started free</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Powered by Gemini AI
+    </div>
+    <h1>Engineering docs<br /><em>in seconds.</em></h1>
+    <p>Describe your product idea and get instant professional design briefs, BOM, DFM analysis, cost estimates, and more.</p>
+    <div class="hero-actions">
+      <a href="tool.html" class="btn-primary">Start for free</a>
+      <a href="#tools" class="btn-secondary">See all tools →</a>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="ticker-item">Design Brief <span>·</span></span>
+      <span class="ticker-item">Bill of Materials <span>·</span></span>
+      <span class="ticker-item">DFM Analysis <span>·</span></span>
+      <span class="ticker-item">CAD Spec Sheet <span>·</span></span>
+      <span class="ticker-item">Cost Estimator <span>·</span></span>
+      <span class="ticker-item">Material Selector <span>·</span></span>
+      <span class="ticker-item">Supplier Finder <span>·</span></span>
+      <span class="ticker-item">Patent Check <span>·</span></span>
+      <span class="ticker-item">Packaging Brief <span>·</span></span>
+      <span class="ticker-item">Design Brief <span>·</span></span>
+      <span class="ticker-item">Bill of Materials <span>·</span></span>
+      <span class="ticker-item">DFM Analysis <span>·</span></span>
+      <span class="ticker-item">CAD Spec Sheet <span>·</span></span>
+      <span class="ticker-item">Cost Estimator <span>·</span></span>
+      <span class="ticker-item">Material Selector <span>·</span></span>
+      <span class="ticker-item">Supplier Finder <span>·</span></span>
+      <span class="ticker-item">Patent Check <span>·</span></span>
+      <span class="ticker-item">Packaging Brief <span>·</span></span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="container">
+      <div class="fade-up">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title">Three steps to a<br />complete product brief.</h2>
+      </div>
+      <div class="how-grid fade-up">
+        <div class="how-card">
+          <div class="how-number">01</div>
+          <h3>Describe your product</h3>
+          <p>Enter your product name, industry, development stage, and budget. No engineering background required.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-number">02</div>
+          <h3>AI generates your docs</h3>
+          <p>Gemini AI processes your input and produces structured, professional engineering documentation instantly.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-number">03</div>
+          <h3>Export and share</h3>
+          <p>Download as PDF or Word, copy as text, or share a public link with your team or investors.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section class="tools" id="tools">
+    <div class="container">
+      <div class="tools-header fade-up">
+        <div>
+          <p class="section-label">AI Tools</p>
+          <h2 class="section-title">Everything your<br />product needs.</h2>
+        </div>
+        <p class="section-sub">9 specialized AI tools covering every stage of product development — from first idea to manufacturing.</p>
+      </div>
+      <div class="tools-grid fade-up">
+        <div class="tool-card">
+          <span class="tool-icon">📄</span>
+          <h3>Design Brief</h3>
+          <p>Full product overview with specs, target market, and design requirements.</p>
+          <span class="tool-badge badge-free">Free</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">🔩</span>
+          <h3>Bill of Materials</h3>
+          <p>Complete parts list with costs, suppliers, and lead times.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">🏭</span>
+          <h3>DFM Analysis</h3>
+          <p>Manufacturing issues flagged by severity — High, Medium, Low.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">📐</span>
+          <h3>CAD Spec Sheet</h3>
+          <p>Tolerances, material grades, and surface finish requirements.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">💰</span>
+          <h3>Cost Estimator</h3>
+          <p>Full cost breakdown by development phase from concept to production.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">🧪</span>
+          <h3>Material Selector</h3>
+          <p>Top 3 material options with pros, cons, and cost per kg.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">🌏</span>
+          <h3>Supplier Finder</h3>
+          <p>UAE & China suppliers with search terms and red flags to watch.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">⚖️</span>
+          <h3>Patent Check</h3>
+          <p>Risk level assessment, similar patents, and differentiation ideas.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">📦</span>
+          <h3>Packaging Brief</h3>
+          <p>Primary and secondary packaging specifications for your product.</p>
+          <span class="tool-badge badge-pro">Pro</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <p class="section-label">Pricing</p>
+        <h2 class="section-title">Simple, honest pricing.</h2>
+        <p class="section-sub" style="margin: 0 auto;">Start free. Upgrade when you're ready for the full toolkit.</p>
+      </div>
+      <div class="pricing-grid fade-up">
+        <div class="price-card">
+          <p class="price-plan">Free</p>
+          <div class="price-amount">$0</div>
+          <p class="price-period">forever</p>
+          <ul class="price-features">
+            <li>1 design brief per month</li>
+            <li>PDF & Word export</li>
+            <li>Public sharing link</li>
+            <li>Brief history</li>
+          </ul>
+          <a href="tool.html" class="btn-price-secondary">Get started</a>
+        </div>
+        <div class="price-card featured">
+          <p class="price-plan">Pro</p>
+          <div class="price-amount">$10</div>
+          <p class="price-period">per month · or $110/year</p>
+          <ul class="price-features">
+            <li>Unlimited design briefs</li>
+            <li>All 9 AI tools</li>
+            <li>PDF & Word export</li>
+            <li>Public sharing link</li>
+            <li>Brief history</li>
+            <li>Priority generation</li>
+          </ul>
+          <button class="btn-price-primary" onclick="handleUpgrade('monthly')">Upgrade to Pro</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">MD<span>Neural</span></div>
+    <p>Built by <a href="https://mechanicaldrafts.com" target="_blank">Mechanical Drafts</a> · UAE Licensed Product Design Consultancy</p>
+    <p style="margin-top:8px;"><a href="mailto:mechanicaldrafts@gmail.com">mechanicaldrafts@gmail.com</a></p>
+  </footer>
+
+  <script>
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Upgrade button
+    async function handleUpgrade(type) {
+      window.location.href = 'tool.html#pricing';
+    }
+  </script>
+</body>
+</html>
