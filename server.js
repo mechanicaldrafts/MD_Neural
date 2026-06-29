@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit";
 
 const app = express();
 
-const GEMINI_API_KEY        = process.env.GEMINI_API_KEY;
+const ANTHROPIC_API_KEY     = process.env.ANTHROPIC_API_KEY;
 const STRIPE_SECRET_KEY     = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const SUPABASE_URL          = process.env.SUPABASE_URL;
@@ -45,29 +45,28 @@ app.post("/api/generate", async (req, res) => {
       return res.status(400).json({ error: "prompt is required" });
     }
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens: max_tokens,
-            temperature: 0.7
-          }
-        })
-      }
-    );
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01"
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: max_tokens,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
 
-    if (!geminiRes.ok) {
-      const err = await geminiRes.json();
-      console.error("Gemini error:", err);
-      return res.status(geminiRes.status).json({ error: err.error?.message || "Gemini API error" });
+    if (!response.ok) {
+      const err = await response.json();
+      console.error("Anthropic error:", err);
+      return res.status(response.status).json({ error: err.error?.message || "AI API error" });
     }
 
-    const data = await geminiRes.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const data = await response.json();
+    const text = data.content?.[0]?.text || "";
 
     res.json({ result: text });
   } catch (err) {
@@ -109,7 +108,7 @@ app.post("/api/webhook", async (req, res) => {
     event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error("Webhook signature error:", err.message);
-    return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+    return res.status(400).json({ error: "Webhook Error: " + err.message });
   }
 
   if (event.type === "checkout.session.completed") {
