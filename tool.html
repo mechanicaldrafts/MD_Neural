@@ -378,7 +378,21 @@
       if (session && session.user) {
         currentUser = session.user;
         document.getElementById('auth-overlay').style.display = 'none';
+        document.getElementById('user-email-display').textContent = currentUser.email;
+        
+        // Load profile with retry
         currentProfile = await loadProfile(currentUser.id);
+        if (!currentProfile) {
+          // Profile might not exist yet, create it
+          await sb.from('profiles').upsert({ 
+            id: currentUser.id, 
+            email: currentUser.email, 
+            is_pro: false, 
+            brief_count: 0 
+          });
+          currentProfile = await loadProfile(currentUser.id);
+        }
+        
         updateUI(currentUser, currentProfile);
         await loadHistory(currentUser.id);
       } else {
