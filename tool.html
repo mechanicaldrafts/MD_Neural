@@ -424,18 +424,23 @@ Write a detailed professional design brief covering:
 Be specific and actionable. Format clearly with section headers.`;
 
       try {
+        console.log('Starting generation...');
         const res = await fetch('https://md-neural-proxy.onrender.com/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt, max_tokens: 2000 })
         });
 
+        console.log('Response status:', res.status);
+
         if (!res.ok) {
           const err = await res.json();
+          console.error('API error:', err);
           throw new Error(err.error || 'Generation failed');
         }
 
         const data = await res.json();
+        console.log('Data received:', data);
         if (!data.result) throw new Error('No result returned');
 
         currentBrief = data.result;
