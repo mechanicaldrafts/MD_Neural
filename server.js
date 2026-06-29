@@ -31,6 +31,7 @@ app.use(cors({
   origin: [
     "https://md-neural.com",
     "https://www.md-neural.com",
+    "https://transcendent-llama-a24f87.netlify.app",
     "https://neon-mousse-f12c80.netlify.app",
     "http://localhost:3000",
     "http://127.0.0.1:5500"  // local live server
