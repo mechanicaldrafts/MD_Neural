@@ -65,8 +65,6 @@
 
     /* MAIN */
     #main { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
-    #main::-webkit-scrollbar { width: 6px; }
-    #main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
     /* INPUT */
     #input-panel { padding: 48px 48px 0; max-width: 800px; width: 100%; margin: 0 auto; }
@@ -91,17 +89,17 @@
     .btn-action { padding: 8px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--gray-400); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; }
     .btn-action:hover { background: rgba(255,255,255,0.06); color: var(--white); border-color: rgba(255,255,255,0.2); }
     .brief-content { background: var(--gray-900); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 32px; font-size: 14px; line-height: 1.8; color: var(--gray-200); margin-bottom: 32px; }
-    .brief-content h1 { font-size: 22px; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.5px; }
+    .brief-content h1 { font-size: 22px; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.5px; color: var(--white); }
     .brief-content h2 { font-size: 17px; font-weight: 700; margin: 24px 0 10px; color: var(--white); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     .brief-content h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--gray-200); }
-    .brief-content p { margin: 0 0 12px; color: var(--gray-200); }
-    .brief-content ul, .brief-content ol { margin: 0 0 12px 20px; color: var(--gray-200); }
+    .brief-content p { margin: 0 0 12px; }
+    .brief-content ul, .brief-content ol { margin: 0 0 12px 20px; }
     .brief-content li { margin-bottom: 4px; }
     .brief-content strong { color: var(--white); font-weight: 600; }
     .brief-content hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
     .brief-content table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
-    .brief-content th { background: rgba(255,255,255,0.06); padding: 10px 14px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
-    .brief-content td { padding: 8px 14px; border: 1px solid var(--border); color: var(--gray-200); }
+    .brief-content th { background: rgba(255,255,255,0.06); padding: 10px 14px; text-align: left; font-weight: 600; border: 1px solid var(--border); color: var(--white); }
+    .brief-content td { padding: 8px 14px; border: 1px solid var(--border); }
     .brief-content code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
     .brief-content pre { background: rgba(255,255,255,0.04); padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; }
 
@@ -121,11 +119,16 @@
     #btn-upgrade { background: var(--white); color: var(--black); border: none; border-radius: var(--radius); padding: 10px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; transition: opacity 0.2s; }
     #btn-upgrade:hover { opacity: 0.88; }
     .tool-result { background: var(--gray-900); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 28px; margin-top: 16px; display: none; }
-    .tool-result-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
-    .tool-result-content { font-size: 13px; color: var(--gray-200); line-height: 1.8; white-space: pre-wrap; }
+    .tool-result-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: var(--white); }
+    .tool-result-content { font-size: 13px; color: var(--gray-200); line-height: 1.8; }
+    .tool-result-content h1,.tool-result-content h2,.tool-result-content h3 { color: var(--white); margin: 12px 0 8px; }
+    .tool-result-content ul,.tool-result-content ol { margin: 0 0 12px 20px; }
+    .tool-result-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; }
+    .tool-result-content th { background: rgba(255,255,255,0.06); padding: 8px 12px; text-align: left; border: 1px solid var(--border); }
+    .tool-result-content td { padding: 6px 12px; border: 1px solid var(--border); }
 
     /* MISC */
-    .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.2); border-top-color: var(--black); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.2); border-top-color: var(--black); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
     @keyframes spin { to { transform: rotate(360deg); } }
     #toast { position: fixed; bottom: 24px; right: 24px; background: var(--white); color: var(--black); padding: 12px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; transform: translateY(8px); transition: all 0.3s; pointer-events: none; }
     #toast.show { opacity: 1; transform: translateY(0); }
@@ -142,14 +145,8 @@
         <button class="auth-tab active" id="tab-signin">Sign in</button>
         <button class="auth-tab" id="tab-signup">Sign up</button>
       </div>
-      <div class="auth-field">
-        <label>Email</label>
-        <input type="email" id="auth-email" placeholder="you@example.com" />
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <input type="password" id="auth-password" placeholder="••••••••" />
-      </div>
+      <div class="auth-field"><label>Email</label><input type="email" id="auth-email" placeholder="you@example.com" /></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="auth-password" placeholder="••••••••" /></div>
       <button class="btn-auth" id="auth-btn">Sign in</button>
       <p class="auth-error" id="auth-error"></p>
       <p class="auth-success" id="auth-success"></p>
@@ -178,54 +175,32 @@
       <h1 class="panel-title">Generate a brief</h1>
       <p class="panel-sub">Fill in your product details and let AI do the rest.</p>
       <div class="form-grid">
-        <div class="form-field full">
-          <label>PRODUCT NAME</label>
-          <input type="text" id="product-name" placeholder="e.g. Smart Water Bottle" />
-        </div>
-        <div class="form-field full">
-          <label>PRODUCT DESCRIPTION</label>
-          <textarea id="product-desc" rows="3" placeholder="Describe what your product does, who it's for, and what makes it unique..."></textarea>
-        </div>
+        <div class="form-field full"><label>PRODUCT NAME</label><input type="text" id="product-name" placeholder="e.g. Smart Water Bottle" /></div>
+        <div class="form-field full"><label>PRODUCT DESCRIPTION</label><textarea id="product-desc" rows="3" placeholder="Describe what your product does, who it's for, and what makes it unique..."></textarea></div>
         <div class="form-field">
           <label>INDUSTRY</label>
           <select id="industry">
             <option value="">Select industry</option>
-            <option>Consumer Electronics</option>
-            <option>Medical Devices</option>
-            <option>Industrial Equipment</option>
-            <option>Consumer Products</option>
-            <option>Automotive</option>
-            <option>Aerospace</option>
-            <option>Food & Beverage</option>
-            <option>Sporting Goods</option>
-            <option>Furniture & Home</option>
-            <option>Other</option>
+            <option>Consumer Electronics</option><option>Medical Devices</option><option>Industrial Equipment</option>
+            <option>Consumer Products</option><option>Automotive</option><option>Aerospace</option>
+            <option>Food & Beverage</option><option>Sporting Goods</option><option>Furniture & Home</option><option>Other</option>
           </select>
         </div>
         <div class="form-field">
           <label>DEVELOPMENT STAGE</label>
           <select id="stage">
             <option value="">Select stage</option>
-            <option>Concept / Idea</option>
-            <option>Prototype</option>
-            <option>Pre-production</option>
-            <option>Ready to manufacture</option>
+            <option>Concept / Idea</option><option>Prototype</option><option>Pre-production</option><option>Ready to manufacture</option>
           </select>
         </div>
         <div class="form-field">
           <label>BUDGET (USD)</label>
           <select id="budget">
             <option value="">Select budget</option>
-            <option>Under $5,000</option>
-            <option>$5,000 – $20,000</option>
-            <option>$20,000 – $100,000</option>
-            <option>$100,000+</option>
+            <option>Under $5,000</option><option>$5,000 – $20,000</option><option>$20,000 – $100,000</option><option>$100,000+</option>
           </select>
         </div>
-        <div class="form-field">
-          <label>TARGET MARKET</label>
-          <input type="text" id="target-market" placeholder="e.g. UAE consumers, B2B" />
-        </div>
+        <div class="form-field"><label>TARGET MARKET</label><input type="text" id="target-market" placeholder="e.g. UAE consumers, B2B" /></div>
       </div>
       <button id="generate-btn">Generate Design Brief</button>
     </div>
@@ -241,7 +216,6 @@
         </div>
       </div>
       <div class="brief-content" id="brief-content"></div>
-
       <div id="pro-tools-section">
         <p class="pro-tools-label">Pro AI Tools</p>
         <div class="pro-tools-grid">
@@ -270,6 +244,7 @@
   <div id="toast"></div>
 
   <script>
+    // CONFIG
     const SUPABASE_URL  = 'https://riekschnhlsxrblmltfr.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpZWtzY2huaGxzeHJibG1sdGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NzE2NTAsImV4cCI6MjA5ODE0NzY1MH0.aXcsdPywCqwYw_HYLzZDAqs6QGaPSLdrE_ZLvagI5P8';
     const PROXY_URL     = 'https://md-neural-proxy.onrender.com';
@@ -278,26 +253,28 @@
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-  document.addEventListener('DOMContentLoaded', function() {
-
+    // STATE
     let currentUser    = null;
     let currentProfile = null;
     let currentBrief   = null;
     let currentBriefId = null;
     let authMode       = 'signin';
+    let briefText      = '';
 
+    // PRO TOOL PROMPTS
     const proToolConfig = {
-      bom:        { icon: '🔩', name: 'Bill of Materials', prompt: (n,b) => `Generate a detailed Bill of Materials (BOM) for: ${n}\n\nProduct Brief:\n${b}\n\nList all components with: Part name, quantity, estimated unit cost (USD), recommended supplier, lead time. Format as a clear table.` },
-      dfm:        { icon: '🏭', name: 'DFM Analysis', prompt: (n,b) => `Perform a DFM analysis for: ${n}\n\nProduct Brief:\n${b}\n\nIdentify manufacturing issues as HIGH/MEDIUM/LOW severity. For each: severity, description, recommended fix.` },
-      cad:        { icon: '📐', name: 'CAD Spec Sheet', prompt: (n,b) => `Generate a CAD Spec Sheet for: ${n}\n\nProduct Brief:\n${b}\n\nInclude: key dimensions and tolerances, material grades, surface finish requirements, GD&T notes, manufacturing process recommendations.` },
-      competitor: { icon: '🔍', name: 'Competitor Analysis', prompt: (n,b) => `Competitor analysis for: ${n}\n\nProduct Brief:\n${b}\n\nIdentify 3-5 similar products. For each: name, price range, key features, weaknesses. Then identify market gaps and opportunities.` },
-      cost:       { icon: '💰', name: 'Cost Estimator', prompt: (n,b) => `Project cost estimate for: ${n}\n\nProduct Brief:\n${b}\n\nBreak down costs by phase: Design & Engineering, Prototyping, Tooling, Manufacturing (100/1000/10000 units), Packaging, Certification. Provide USD estimates.` },
-      material:   { icon: '🧪', name: 'Material Selector', prompt: (n,b) => `Top 3 materials for: ${n}\n\nProduct Brief:\n${b}\n\nFor each: name, key properties, pros, cons, approx cost per kg, processing methods, suitability score 1-10.` },
-      supplier:   { icon: '🌏', name: 'Supplier Finder', prompt: (n,b) => `Suppliers for: ${n}\n\nProduct Brief:\n${b}\n\n3 UAE suppliers and 3 China suppliers. Include Alibaba search terms, typical MOQ, lead times, red flags, quality verification tips.` },
-      patent:     { icon: '⚖️', name: 'Patent Check', prompt: (n,b) => `Patent risk assessment for: ${n}\n\nProduct Brief:\n${b}\n\nAssess: overall risk level (Low/Medium/High), 3-5 similar existing patents, differentiating features, recommendations.` },
-      packaging:  { icon: '📦', name: 'Packaging Brief', prompt: (n,b) => `Packaging brief for: ${n}\n\nProduct Brief:\n${b}\n\nSpecify: primary packaging, secondary packaging, sustainability, labeling requirements, estimated packaging cost.` }
+      bom:        { icon: '🔩', name: 'Bill of Materials', prompt: (n,b) => `Generate a detailed Bill of Materials (BOM) for: ${n}\n\nProduct Brief:\n${b}\n\nList all components with: Part name, quantity, estimated unit cost (USD), recommended supplier, lead time. Format as a markdown table.` },
+      dfm:        { icon: '🏭', name: 'DFM Analysis', prompt: (n,b) => `Perform a DFM analysis for: ${n}\n\nProduct Brief:\n${b}\n\nIdentify manufacturing issues as HIGH/MEDIUM/LOW severity. For each: severity, description, recommended fix. Use markdown formatting.` },
+      cad:        { icon: '📐', name: 'CAD Spec Sheet', prompt: (n,b) => `Generate a CAD Spec Sheet for: ${n}\n\nProduct Brief:\n${b}\n\nInclude: key dimensions and tolerances, material grades, surface finish requirements, GD&T notes, manufacturing process recommendations. Use markdown formatting.` },
+      competitor: { icon: '🔍', name: 'Competitor Analysis', prompt: (n,b) => `Competitor analysis for: ${n}\n\nProduct Brief:\n${b}\n\nIdentify 3-5 similar products. For each: name, price range, key features, weaknesses. Then identify market gaps and opportunities. Use markdown formatting.` },
+      cost:       { icon: '💰', name: 'Cost Estimator', prompt: (n,b) => `Project cost estimate for: ${n}\n\nProduct Brief:\n${b}\n\nBreak down costs by phase: Design & Engineering, Prototyping, Tooling, Manufacturing (100/1000/10000 units), Packaging, Certification. Provide USD estimates in a markdown table.` },
+      material:   { icon: '🧪', name: 'Material Selector', prompt: (n,b) => `Top 3 materials for: ${n}\n\nProduct Brief:\n${b}\n\nFor each: name, key properties, pros, cons, approx cost per kg, processing methods, suitability score 1-10. Use markdown formatting.` },
+      supplier:   { icon: '🌏', name: 'Supplier Finder', prompt: (n,b) => `Suppliers for: ${n}\n\nProduct Brief:\n${b}\n\n3 UAE suppliers and 3 China suppliers. Include search terms, typical MOQ, lead times, red flags, quality verification tips. Use markdown formatting.` },
+      patent:     { icon: '⚖️', name: 'Patent Check', prompt: (n,b) => `Patent risk assessment for: ${n}\n\nProduct Brief:\n${b}\n\nAssess: overall risk level (Low/Medium/High), 3-5 similar existing patents, differentiating features, recommendations. Use markdown formatting.` },
+      packaging:  { icon: '📦', name: 'Packaging Brief', prompt: (n,b) => `Packaging brief for: ${n}\n\nProduct Brief:\n${b}\n\nSpecify: primary packaging, secondary packaging, sustainability, labeling requirements, estimated packaging cost. Use markdown formatting.` }
     };
 
+    // TOAST
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
@@ -305,31 +282,109 @@
       setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // AUTH STATE
+    // UPDATE UI AFTER LOGIN
+    function updateUI(user, profile) {
+      document.getElementById('user-email-display').textContent = user.email;
+      const badge = document.getElementById('user-badge');
+      if (profile && profile.is_pro) {
+        badge.textContent = 'Pro';
+        badge.className = 'user-badge badge-pro-tag';
+      } else {
+        badge.textContent = 'Free';
+        badge.className = 'user-badge badge-free-tag';
+      }
+      updateProToolState(profile);
+    }
+
+    function updateProToolState(profile) {
+      const isPro = profile && profile.is_pro;
+      document.querySelectorAll('.pro-tool-btn').forEach(btn => {
+        btn.disabled = !isPro;
+        const existing = btn.querySelector('.pro-tool-lock');
+        if (!isPro && !existing) {
+          const l = document.createElement('span');
+          l.className = 'pro-tool-lock'; l.textContent = '🔒';
+          btn.appendChild(l);
+        }
+        if (isPro && existing) existing.remove();
+      });
+      const banner = document.getElementById('upgrade-banner');
+      if (banner) banner.style.display = isPro ? 'none' : 'flex';
+    }
+
+    // LOAD PROFILE
+    async function loadProfile(userId) {
+      const { data, error } = await sb.from('profiles').select('*').eq('id', userId).single();
+      if (error) console.error('Profile error:', error);
+      return data;
+    }
+
+    // LOAD HISTORY
+    async function loadHistory(userId) {
+      const { data, error } = await sb.from('briefs')
+        .select('id, product_name, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(30);
+
+      if (error) { console.error('History error:', error); return; }
+
+      const list = document.getElementById('history-list');
+      list.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        list.innerHTML = '<p style="font-size:12px;color:var(--gray-600);padding:8px 16px;">No briefs yet.</p>';
+        return;
+      }
+
+      data.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'history-item';
+        el.dataset.id = item.id;
+        el.innerHTML = `<div class="history-name">${item.product_name}</div><div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>`;
+        el.addEventListener('click', () => loadBriefFromHistory(item.id));
+        list.appendChild(el);
+      });
+    }
+
+    async function loadBriefFromHistory(id) {
+      const { data } = await sb.from('briefs').select('*').eq('id', id).single();
+      if (!data) return;
+      currentBriefId = id;
+      briefText = typeof data.brief_data === 'string' ? data.brief_data : JSON.stringify(data.brief_data, null, 2);
+      currentBrief = briefText;
+      document.getElementById('product-name').value  = data.product_name || '';
+      document.getElementById('product-desc').value  = data.input_data?.description || '';
+      document.getElementById('industry').value      = data.input_data?.industry || '';
+      document.getElementById('stage').value         = data.input_data?.stage || '';
+      document.getElementById('budget').value        = data.input_data?.budget || '';
+      document.getElementById('target-market').value = data.input_data?.targetMarket || '';
+      showOutput(data.product_name, briefText);
+      document.querySelectorAll('.history-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+      document.getElementById('tool-result').style.display = 'none';
+    }
+
+    // SHOW OUTPUT
+    function showOutput(name, text) {
+      document.getElementById('input-panel').style.display = 'none';
+      document.getElementById('output-panel').style.display = 'block';
+      document.getElementById('brief-title').textContent = name;
+      document.getElementById('brief-content').innerHTML = marked.parse(text);
+      updateProToolState(currentProfile);
+    }
+
+    // AUTH STATE CHANGE
     sb.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth event:', event, session);
-      if (session?.user) {
+      if (session && session.user) {
         currentUser = session.user;
         document.getElementById('auth-overlay').style.display = 'none';
-        document.getElementById('user-email-display').textContent = currentUser.email;
-        await loadProfile();
-        loadHistory();
+        currentProfile = await loadProfile(currentUser.id);
+        updateUI(currentUser, currentProfile);
+        await loadHistory(currentUser.id);
       } else {
         currentUser = null;
         currentProfile = null;
         document.getElementById('auth-overlay').style.display = 'flex';
-      }
-    });
-
-    // Also check session on page load
-    sb.auth.getSession().then(({ data: { session } }) => {
-      console.log('Existing session:', session);
-      if (session?.user) {
-        currentUser = session.user;
-        document.getElementById('auth-overlay').style.display = 'none';
-        document.getElementById('user-email-display').textContent = currentUser.email;
-        loadProfile();
-        loadHistory();
       }
     });
 
@@ -390,6 +445,8 @@
     // SIGN OUT
     document.getElementById('signout-btn').addEventListener('click', async () => {
       await sb.auth.signOut();
+      document.getElementById('output-panel').style.display = 'none';
+      document.getElementById('input-panel').style.display = 'block';
     });
 
     // NEW BRIEF
@@ -397,8 +454,7 @@
       document.getElementById('output-panel').style.display = 'none';
       document.getElementById('input-panel').style.display = 'block';
       document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
-      currentBrief = null;
-      currentBriefId = null;
+      currentBrief = null; currentBriefId = null; briefText = '';
       document.getElementById('tool-result').style.display = 'none';
     });
 
@@ -419,7 +475,7 @@
       btn.disabled = true;
       btn.innerHTML = '<div class="spinner"></div> Generating...';
 
-      const prompt = `You are a senior product design engineer. Generate a comprehensive product design brief.
+      const prompt = `You are a senior product design engineer. Generate a comprehensive product design brief using markdown formatting.
 
 Product Name: ${name}
 Description: ${desc}
@@ -437,43 +493,40 @@ Write a detailed professional design brief covering:
 6. Design Constraints
 7. Success Metrics
 
-Be specific and actionable. Format clearly with section headers.`;
+Use markdown headers (##), bullet points, and tables where appropriate. Be specific and actionable.`;
 
       try {
-        console.log('Starting generation...');
-        const res = await fetch('https://md-neural-proxy.onrender.com/api/generate', {
+        const res = await fetch(`${PROXY_URL}/api/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt, max_tokens: 2000 })
         });
 
-        console.log('Response status:', res.status);
-
         if (!res.ok) {
           const err = await res.json();
-          console.error('API error:', err);
           throw new Error(err.error || 'Generation failed');
         }
 
         const data = await res.json();
-        console.log('Data received:', data);
         if (!data.result) throw new Error('No result returned');
 
-        currentBrief = data.result;
+        briefText = data.result;
+        currentBrief = briefText;
 
-        // Save to Supabase in background — don't block the UI
+        // Save to Supabase
         const shareId   = crypto.randomUUID().slice(0, 8);
         const inputData = { description: desc, industry: ind, stage, budget, targetMarket: market };
 
-        sb.from('briefs').insert({
+        const { data: saved } = await sb.from('briefs').insert({
           user_id: currentUser.id, product_name: name,
-          brief_data: currentBrief, input_data: inputData,
+          brief_data: briefText, input_data: inputData,
           share_id: shareId, is_public: false
-        }).select().single().then(({ data: saved }) => {
-          if (saved) { currentBriefId = saved.id; loadHistory(); }
-        });
+        }).select().single();
 
-        showOutput(name, currentBrief);
+        if (saved) { currentBriefId = saved.id; }
+
+        showOutput(name, briefText);
+        await loadHistory(currentUser.id);
 
       } catch (err) {
         showToast(err.message || 'Generation failed. Please try again.');
@@ -484,82 +537,11 @@ Be specific and actionable. Format clearly with section headers.`;
       }
     });
 
-    function showOutput(name, text) {
-      document.getElementById('input-panel').style.display = 'none';
-      document.getElementById('output-panel').style.display = 'block';
-      document.getElementById('brief-title').textContent = name;
-      document.getElementById('brief-content').innerHTML = marked.parse(text);
-      updateProToolState();
-    }
-
-    // PROFILE
-    async function loadProfile() {
-      const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-      currentProfile = data;
-      const badge = document.getElementById('user-badge');
-      if (data?.is_pro) { badge.textContent = 'Pro'; badge.className = 'user-badge badge-pro-tag'; }
-      else { badge.textContent = 'Free'; badge.className = 'user-badge badge-free-tag'; }
-    }
-
-    function updateProToolState() {
-      const isPro = currentProfile?.is_pro;
-      document.querySelectorAll('.pro-tool-btn').forEach(btn => {
-        btn.disabled = !isPro;
-        const existing = btn.querySelector('.pro-tool-lock');
-        if (!isPro && !existing) {
-          const l = document.createElement('span');
-          l.className = 'pro-tool-lock'; l.textContent = '🔒';
-          btn.appendChild(l);
-        }
-        if (isPro && existing) existing.remove();
-      });
-      document.getElementById('upgrade-banner').style.display = isPro ? 'none' : 'flex';
-    }
-
-    // HISTORY
-    async function loadHistory() {
-      const { data } = await sb.from('briefs').select('id, product_name, created_at')
-        .eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(30);
-
-      const list = document.getElementById('history-list');
-      list.innerHTML = '';
-
-      if (!data?.length) {
-        list.innerHTML = '<p style="font-size:12px;color:var(--gray-600);padding:8px 16px;">No briefs yet.</p>';
-        return;
-      }
-
-      data.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'history-item';
-        el.dataset.id = item.id;
-        el.innerHTML = `<div class="history-name">${item.product_name}</div><div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>`;
-        el.addEventListener('click', () => loadBriefFromHistory(item.id));
-        list.appendChild(el);
-      });
-    }
-
-    async function loadBriefFromHistory(id) {
-      const { data } = await sb.from('briefs').select('*').eq('id', id).single();
-      if (!data) return;
-      currentBriefId = id;
-      currentBrief   = data.brief_data;
-      document.getElementById('product-name').value  = data.product_name || '';
-      document.getElementById('product-desc').value  = data.input_data?.description || '';
-      document.getElementById('industry').value      = data.input_data?.industry || '';
-      document.getElementById('stage').value         = data.input_data?.stage || '';
-      document.getElementById('budget').value        = data.input_data?.budget || '';
-      document.getElementById('target-market').value = data.input_data?.targetMarket || '';
-      showOutput(data.product_name, typeof data.brief_data === 'string' ? data.brief_data : JSON.stringify(data.brief_data, null, 2));
-      document.querySelectorAll('.history-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
-      document.getElementById('tool-result').style.display = 'none';
-    }
-
     // PRO TOOLS
     document.querySelectorAll('.pro-tool-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const toolKey = btn.dataset.tool;
-        if (!currentProfile?.is_pro) { showToast('Upgrade to Pro to use this tool.'); return; }
+        if (!currentProfile || !currentProfile.is_pro) { showToast('Upgrade to Pro to use this tool.'); return; }
         if (!currentBrief) { showToast('Generate a brief first.'); return; }
 
         const config    = proToolConfig[toolKey];
@@ -570,7 +552,7 @@ Be specific and actionable. Format clearly with section headers.`;
 
         resultEl.style.display  = 'block';
         titleEl.textContent     = `${config.icon} ${config.name} — generating...`;
-        contentEl.textContent   = '';
+        contentEl.innerHTML     = '';
         resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
         try {
@@ -581,7 +563,7 @@ Be specific and actionable. Format clearly with section headers.`;
           const data = await res.json();
           if (data.error) throw new Error(data.error);
           titleEl.textContent   = `${config.icon} ${config.name}`;
-          contentEl.innerHTML = marked.parse(data.result);
+          contentEl.innerHTML   = marked.parse(data.result);
         } catch (err) {
           titleEl.textContent   = `${config.icon} ${config.name}`;
           contentEl.textContent = 'Generation failed. Please try again.';
@@ -590,24 +572,21 @@ Be specific and actionable. Format clearly with section headers.`;
       });
     });
 
-    // EXPORT BUTTONS
+    // EXPORT
     document.getElementById('btn-copy').addEventListener('click', () => {
-      navigator.clipboard.writeText(document.getElementById('brief-content').textContent)
-        .then(() => showToast('Copied to clipboard!'));
+      navigator.clipboard.writeText(briefText).then(() => showToast('Copied to clipboard!'));
     });
 
     document.getElementById('btn-pdf').addEventListener('click', () => {
-      const text = document.getElementById('brief-content').textContent;
       const name = document.getElementById('brief-title').textContent;
       const win  = window.open('', '_blank');
-      win.document.write(`<html><head><title>${name}</title><style>body{font-family:Inter,sans-serif;padding:48px;max-width:800px;margin:0 auto;color:#111;line-height:1.7;}pre{white-space:pre-wrap;font-family:inherit;}</style></head><body><h1>${name}</h1><pre>${text}</pre></body></html>`);
+      win.document.write(`<html><head><title>${name}</title><style>body{font-family:Inter,sans-serif;padding:48px;max-width:800px;margin:0 auto;color:#111;line-height:1.7;}h1,h2,h3{margin-top:24px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ddd;padding:8px;}</style></head><body>${marked.parse(briefText)}</body></html>`);
       win.document.close(); win.print();
     });
 
     document.getElementById('btn-word').addEventListener('click', () => {
-      const text = document.getElementById('brief-content').textContent;
       const name = document.getElementById('brief-title').textContent;
-      const blob = new Blob([`${name}\n\n${text}`], { type: 'application/msword' });
+      const blob = new Blob([briefText], { type: 'application/msword' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href = url; a.download = `${name}-brief.doc`;
@@ -636,12 +615,8 @@ Be specific and actionable. Format clearly with section headers.`;
     // PAYMENT SUCCESS
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
-      setTimeout(() => {
-        showToast('Welcome to Pro! Refreshing...');
-        setTimeout(() => location.reload(), 2000);
-      }, 1000);
+      setTimeout(() => { showToast('Welcome to Pro! Refreshing...'); setTimeout(() => location.reload(), 2000); }, 1000);
     }
-  }); // end DOMContentLoaded
   </script>
 </body>
 </html>
