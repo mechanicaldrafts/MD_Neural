@@ -270,7 +270,6 @@
   <div id="toast"></div>
 
   <script>
-  document.addEventListener('DOMContentLoaded', function() {
     const SUPABASE_URL  = 'https://riekschnhlsxrblmltfr.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpZWtzY2huaGxzeHJibG1sdGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NzE2NTAsImV4cCI6MjA5ODE0NzY1MH0.aXcsdPywCqwYw_HYLzZDAqs6QGaPSLdrE_ZLvagI5P8';
     const PROXY_URL     = 'https://md-neural-proxy.onrender.com';
@@ -278,6 +277,8 @@
     const PRICE_YEARLY  = 'price_1Tn23MDhCPp6Mqwf1km24FJf';
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  document.addEventListener('DOMContentLoaded', function() {
 
     let currentUser    = null;
     let currentProfile = null;
