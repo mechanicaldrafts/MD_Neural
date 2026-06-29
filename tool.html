@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -291,16 +291,29 @@
 
     // AUTH STATE
     sb.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth event:', event, session);
       if (session?.user) {
         currentUser = session.user;
-        await loadProfile();
         document.getElementById('auth-overlay').style.display = 'none';
         document.getElementById('user-email-display').textContent = currentUser.email;
+        await loadProfile();
         loadHistory();
       } else {
         currentUser = null;
         currentProfile = null;
         document.getElementById('auth-overlay').style.display = 'flex';
+      }
+    });
+
+    // Also check session on page load
+    sb.auth.getSession().then(({ data: { session } }) => {
+      console.log('Existing session:', session);
+      if (session?.user) {
+        currentUser = session.user;
+        document.getElementById('auth-overlay').style.display = 'none';
+        document.getElementById('user-email-display').textContent = currentUser.email;
+        loadProfile();
+        loadHistory();
       }
     });
 
