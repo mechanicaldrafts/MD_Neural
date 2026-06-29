@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -89,7 +90,20 @@
     .brief-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-action { padding: 8px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--gray-400); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; }
     .btn-action:hover { background: rgba(255,255,255,0.06); color: var(--white); border-color: rgba(255,255,255,0.2); }
-    .brief-content { background: var(--gray-900); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 32px; font-size: 14px; line-height: 1.8; color: var(--gray-200); white-space: pre-wrap; margin-bottom: 32px; }
+    .brief-content { background: var(--gray-900); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 32px; font-size: 14px; line-height: 1.8; color: var(--gray-200); margin-bottom: 32px; }
+    .brief-content h1 { font-size: 22px; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.5px; }
+    .brief-content h2 { font-size: 17px; font-weight: 700; margin: 24px 0 10px; color: var(--white); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    .brief-content h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--gray-200); }
+    .brief-content p { margin: 0 0 12px; color: var(--gray-200); }
+    .brief-content ul, .brief-content ol { margin: 0 0 12px 20px; color: var(--gray-200); }
+    .brief-content li { margin-bottom: 4px; }
+    .brief-content strong { color: var(--white); font-weight: 600; }
+    .brief-content hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .brief-content table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+    .brief-content th { background: rgba(255,255,255,0.06); padding: 10px 14px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+    .brief-content td { padding: 8px 14px; border: 1px solid var(--border); color: var(--gray-200); }
+    .brief-content code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+    .brief-content pre { background: rgba(255,255,255,0.04); padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; }
 
     /* PRO TOOLS */
     .pro-tools-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-600); margin-bottom: 14px; }
@@ -473,7 +487,7 @@ Be specific and actionable. Format clearly with section headers.`;
       document.getElementById('input-panel').style.display = 'none';
       document.getElementById('output-panel').style.display = 'block';
       document.getElementById('brief-title').textContent = name;
-      document.getElementById('brief-content').textContent = text;
+      document.getElementById('brief-content').innerHTML = marked.parse(text);
       updateProToolState();
     }
 
@@ -566,7 +580,7 @@ Be specific and actionable. Format clearly with section headers.`;
           const data = await res.json();
           if (data.error) throw new Error(data.error);
           titleEl.textContent   = `${config.icon} ${config.name}`;
-          contentEl.textContent = data.result;
+          contentEl.innerHTML = marked.parse(data.result);
         } catch (err) {
           titleEl.textContent   = `${config.icon} ${config.name}`;
           contentEl.textContent = 'Generation failed. Please try again.';
