@@ -28,14 +28,7 @@ app.use(express.json());
 
 // CORS — allow your frontend domains
 app.use(cors({
-  origin: [
-    "https://md-neural.com",
-    "https://www.md-neural.com",
-    "https://transcendent-llama-a24f87.netlify.app",
-    "https://neon-mousse-f12c80.netlify.app",
-    "http://localhost:3000",
-    "http://127.0.0.1:5500"  // local live server
-  ],
+  origin: true,
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -44,7 +37,8 @@ app.use(cors({
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 20,
-  message: { error: "Too many requests. Please wait before trying again." }
+  message: { error: "Too many requests. Please wait before trying again." },
+  validate: { xForwardedForHeader: false }
 });
 app.use("/api/generate", limiter);
 
@@ -63,7 +57,7 @@ app.post("/api/generate", async (req, res) => {
     }
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
